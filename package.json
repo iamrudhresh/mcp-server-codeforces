@@ -1,0 +1,51 @@
+{
+  "name": "mcp-server-codeforces",
+  "version": "1.0.0",
+  "mcpName": "io.github.iamrudhresh/codeforces",
+  "description": "Read-only MCP server for the official Codeforces API: problems, users, contests and analytics as structured JSON for LLMs",
+  "type": "module",
+  "main": "src/server.js",
+  "bin": {
+    "mcp-server-codeforces": "src/server.js",
+    "codeforces-mcp": "src/server.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/unit.js && node test/smoke.js && node test/mcp.js",
+    "test:unit": "node test/unit.js",
+    "test:live": "node test/smoke.js",
+    "test:mcp": "node test/mcp.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "codeforces",
+    "competitive-programming",
+    "online-judge",
+    "llm",
+    "read-only"
+  ],
+  "author": "iamrudhresh",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamrudhresh/mcp-server-codeforces.git"
+  },
+  "homepage": "https://iamrudhresh.github.io/mcp-server-codeforces/",
+  "bugs": {
+    "url": "https://github.com/iamrudhresh/mcp-server-codeforces/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  }
+}

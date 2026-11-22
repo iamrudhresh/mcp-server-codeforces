@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codeforces MCP Server | Documentation &amp; Showcase</title>
+    <meta name="description" content="Read-only Model Context Protocol (MCP) server for the official Codeforces API: 17 tools for problems, users, contests and analytics, in Node.js and Python.">
+    <meta property="og:title" content="Codeforces MCP Server">
+    <meta property="og:description" content="17 read-only tools that turn the official Codeforces API into structured JSON for AI assistants.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0B0F17">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='9' width='5' height='13' rx='1' fill='%23FDCB0B'/%3E%3Crect x='9.5' y='3' width='5' height='19' rx='1' fill='%231F8ACB'/%3E%3Crect x='17' y='12' width='5' height='10' rx='1' fill='%23E1251B'/%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cfyellow: '#FDCB0B',
+                        cfblue: '#1F8ACB',
+                        cfred: '#E1251B',
+                        darkbg: '#0B0F17',
+                        cardbg: '#111827',
+                        cardborder: '#1F2937'
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Fira Code', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0B0F17; }
+        .glass {
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .code-glass {
+            background: rgba(10, 15, 24, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .gradient-text {
+            background: linear-gradient(120deg, #FDCB0B 0%, #1F8ACB 50%, #E1251B 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+        .tier-bar > div { flex: 1 1 0; }
+        pre code { white-space: pre; }
+        :focus-visible { outline: 2px solid #1F8ACB; outline-offset: 2px; }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-200 min-h-screen antialiased selection:bg-cfblue selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 inset-x-0 z-50 glass border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="2" y="9" width="5" height="13" rx="1" fill="#FDCB0B"/>
+                    <rect x="9.5" y="3" width="5" height="19" rx="1" fill="#1F8ACB"/>
+                    <rect x="17" y="12" width="5" height="10" rx="1" fill="#E1251B"/>
+                </svg>
+                <div>
+                    <span class="font-bold text-lg text-white tracking-tight">Codeforces</span>
+                    <span class="text-xs px-2 py-0.5 ml-1.5 rounded-full bg-cfblue/20 text-sky-300 border border-cfblue/40 font-mono">MCP SERVER</span>
+                </div>
+            </a>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-sky-300 transition">Features</a>
+                <a href="#configurator" class="hover:text-sky-300 transition">Client Setup</a>
+                <a href="#tools" class="hover:text-sky-300 transition">Tools</a>
+                <a href="#architecture" class="hover:text-sky-300 transition">Architecture</a>
+                <a href="#quality" class="hover:text-sky-300 transition">Quality</a>
+            </div>
+            <a href="https://github.com/iamrudhresh/mcp-server-codeforces" target="_blank" rel="noopener" class="flex items-center space-x-2 text-xs font-medium px-3.5 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 transition">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span>GitHub</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center relative overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] max-w-full h-[360px] bg-gradient-to-tr from-cfyellow/10 via-cfblue/20 to-cfred/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+        <div class="inline-flex flex-wrap justify-center items-center gap-2 px-3 py-1 rounded-full bg-cfblue/10 border border-cfblue/30 text-sky-300 text-xs font-medium mb-6">
+            <span class="w-2 h-2 rounded-full bg-sky-400 badge-pulse"></span>
+            <span>Model Context Protocol</span>
+            <span class="hidden sm:inline text-gray-500">|</span>
+            <span class="text-gray-300">Official API · Read-only · Dual runtime</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+            Give your AI a seat at <br class="hidden sm:block">
+            <span class="gradient-text">Codeforces</span>
+        </h1>
+
+        <p class="max-w-3xl mx-auto text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed">
+            <strong class="text-gray-200">17 read-only tools</strong> that turn the official Codeforces API into
+            compact, structured JSON &mdash; problem search, practice ladders, rating history, performance
+            analytics, standings and live contests &mdash; for Claude, Cursor, Cline and any MCP client.
+            Same tools, same outputs, in <span class="text-sky-300 font-medium">Node.js</span> and
+            <span class="text-sky-300 font-medium">Python</span>.
+        </p>
+
+        <div class="max-w-xl mx-auto mb-10">
+            <div class="code-glass p-2.5 rounded-2xl flex items-center justify-between gap-3 shadow-2xl">
+                <div class="flex items-center space-x-2 sm:space-x-3 pl-1 sm:pl-2 overflow-hidden text-[11px] sm:text-sm font-mono text-gray-300">
+                    <span class="text-cfyellow">$</span>
+                    <span class="whitespace-nowrap">npx -y mcp-server-codeforces</span>
+                </div>
+                <button onclick="copySnippet('npx -y mcp-server-codeforces', this)" class="shrink-0 px-4 py-2 rounded-xl bg-cfblue hover:bg-sky-600 text-white text-xs font-semibold transition">Copy</button>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-gray-400">
+            <span class="px-3 py-1 rounded-lg bg-gray-900 border border-gray-800"><span class="text-cfyellow">&#9679;</span> 17 tools</span>
+            <span class="px-3 py-1 rounded-lg bg-gray-900 border border-gray-800"><span class="text-sky-400">&#9679;</span> Node.js &amp; Python</span>
+            <span class="px-3 py-1 rounded-lg bg-gray-900 border border-gray-800"><span class="text-green-400">&#9679;</span> stdio &amp; Streamable HTTP</span>
+            <span class="px-3 py-1 rounded-lg bg-gray-900 border border-gray-800"><span class="text-purple-400">&#9679;</span> No credentials</span>
+            <span class="px-3 py-1 rounded-lg bg-gray-900 border border-gray-800"><span class="text-red-400">&#9679;</span> 283 passing checks</span>
+        </div>
+    </header>
+
+    <!-- Features -->
+    <section id="features" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2">Core capabilities</h2>
+            <p class="text-3xl font-bold text-white">Everything a competitive programmer asks about</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-cfyellow/15 text-cfyellow flex items-center justify-center font-mono font-bold mb-4">A</div>
+                <h3 class="text-white font-semibold mb-2">Problemset search</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">Find problems by id (<code class="font-mono text-gray-300">158A</code>), title, tag or rating. Multi-word queries use AND semantics, so <code class="font-mono text-gray-300">dp 1500</code> means exactly that.</p>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-cfblue/15 text-sky-300 flex items-center justify-center font-mono font-bold mb-4">&#8599;</div>
+                <h3 class="text-white font-semibold mb-2">Rating history &amp; analytics</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">Per-contest deltas, best rating, biggest swing, acceptance rate, verdict mix, favourite languages, strongest tags and a solved-by-rating curve.</p>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-cfred/15 text-red-400 flex items-center justify-center font-mono font-bold mb-4">#1</div>
+                <h3 class="text-white font-semibold mb-2">Contests &amp; standings</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">Upcoming rounds with hours-to-start, standings windows filtered by handle, post-contest rating changes and per-contest submissions.</p>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-green-500/15 text-green-400 flex items-center justify-center font-mono font-bold mb-4">&#10003;</div>
+                <h3 class="text-white font-semibold mb-2">Read-only by construction</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">No login, no cookies, no code execution, no submissions. <code class="font-mono text-gray-300">get_capabilities</code> states the contract so agents never try.</p>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-300 flex items-center justify-center font-mono font-bold mb-4">&#8987;</div>
+                <h3 class="text-white font-semibold mb-2">Rate-limit aware</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">A serialized throttle, TTL cache and exponential backoff on <em>Call limit exceeded</em>, 429, 5xx and timeouts keep you inside Codeforces' limits.</p>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-300 flex items-center justify-center font-mono font-bold mb-4">{}</div>
+                <h3 class="text-white font-semibold mb-2">Context-window safe</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">The 20&nbsp;MB problemset, 26&nbsp;MB rated list and full standings are normalized and capped. Submissions are compacted to the fields that matter.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Configurator -->
+    <section id="configurator" class="py-16 bg-gray-950/60 border-y border-gray-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2">Client setup</h2>
+                <p class="text-3xl font-bold text-white">Copy a config, restart your client</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 mb-6" role="tablist">
+                <button onclick="setClient('claude')" id="tab-claude" class="client-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">Claude Desktop</button>
+                <button onclick="setClient('claudecode')" id="tab-claudecode" class="client-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">Claude Code</button>
+                <button onclick="setClient('cursor')" id="tab-cursor" class="client-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">Cursor</button>
+                <button onclick="setClient('cline')" id="tab-cline" class="client-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">VS Code (Cline)</button>
+                <button onclick="setClient('docker')" id="tab-docker" class="client-tab px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">Docker / HTTP</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4" id="cfg-controls">
+                <label class="text-xs text-gray-400">Runtime
+                    <select id="cfg-runtime" onchange="renderConfig()" class="mt-1 w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cfblue">
+                        <option value="node">Node.js (npx)</option>
+                        <option value="python">Python (FastMCP)</option>
+                    </select>
+                </label>
+                <label class="text-xs text-gray-400">Transport
+                    <select id="cfg-transport" onchange="renderConfig()" class="mt-1 w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cfblue">
+                        <option value="stdio">STDIO (local)</option>
+                        <option value="http">Streamable HTTP (Python)</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="rounded-xl overflow-hidden border border-gray-800">
+                <div class="flex items-center justify-between bg-gray-900 px-4 py-2 text-xs font-mono text-gray-400">
+                    <span id="config-filename">claude_desktop_config.json</span>
+                    <button onclick="copyCurrentConfig(this)" class="px-3 py-1 rounded-lg bg-cfblue hover:bg-sky-600 text-white font-semibold">Copy</button>
+                </div>
+                <pre class="code-glass p-4 overflow-x-auto text-xs font-mono text-gray-200"><code id="config-code">Loading config...</code></pre>
+            </div>
+            <p id="config-note" class="text-xs text-gray-500 mt-3"></p>
+        </div>
+    </section>
+
+    <!-- Tools -->
+    <section id="tools" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2">Tool explorer</h2>
+            <p class="text-3xl font-bold text-white">17 tools, one contract</p>
+            <p class="text-sm text-gray-500 mt-2">Arguments shown in Node.js camelCase; the Python runtime uses snake_case equivalents.</p>
+        </div>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div class="flex flex-wrap gap-2" id="filter-pills">
+                <button onclick="filterCategory('all', this)" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-cfblue text-white">All</button>
+                <button onclick="filterCategory('problems', this)" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-gray-400">Problemset</button>
+                <button onclick="filterCategory('users', this)" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-gray-400">Users</button>
+                <button onclick="filterCategory('contests', this)" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-gray-400">Contests</button>
+                <button onclick="filterCategory('meta', this)" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900 text-gray-400">Meta</button>
+            </div>
+            <input type="search" id="tool-search" oninput="applyFilters()" placeholder="Search tools..." aria-label="Search tools" class="w-full md:w-64 bg-gray-900 border border-gray-700 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cfblue">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="tools-container"></div>
+        <p id="tools-empty" class="hidden text-center text-sm text-gray-500 py-10">No tools match that search.</p>
+    </section>
+
+    <!-- Rating tiers -->
+    <section class="py-12 bg-gray-950/60 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2 text-center">Built-in tier labels</h2>
+            <p class="text-center text-gray-400 text-sm mb-6">Every rating in every response carries its Codeforces rank name.</p>
+            <div class="tier-bar flex flex-wrap rounded-xl overflow-hidden text-[11px] font-mono text-center">
+                <div class="min-w-[90px] py-3 bg-gray-500/30 text-gray-200">newbie<br>&lt;1200</div>
+                <div class="min-w-[90px] py-3 bg-green-600/30 text-green-200">pupil<br>1200</div>
+                <div class="min-w-[90px] py-3 bg-cyan-600/30 text-cyan-200">specialist<br>1400</div>
+                <div class="min-w-[90px] py-3 bg-blue-600/30 text-blue-200">expert<br>1600</div>
+                <div class="min-w-[90px] py-3 bg-violet-600/30 text-violet-200">cand. master<br>1900</div>
+                <div class="min-w-[90px] py-3 bg-orange-500/30 text-orange-200">master<br>2100</div>
+                <div class="min-w-[90px] py-3 bg-orange-600/40 text-orange-100">intl. master<br>2300</div>
+                <div class="min-w-[90px] py-3 bg-red-600/30 text-red-200">grandmaster<br>2400</div>
+                <div class="min-w-[90px] py-3 bg-red-600/45 text-red-100">intl. GM<br>2600</div>
+                <div class="min-w-[90px] py-3 bg-red-700/60 text-white">legendary<br>3000+</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2">Architecture</h2>
+            <p class="text-3xl font-bold text-white">One pipeline, two runtimes</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row items-stretch gap-3 mb-10 text-sm">
+            <div class="glass rounded-xl p-4 flex-1"><div class="text-xs font-mono text-cfyellow mb-1">1 · tools</div><div class="text-white font-medium">Schema validation</div><div class="text-gray-400 text-xs mt-1">zod / type hints, handle regex, bounds</div></div>
+            <div class="hidden lg:flex items-center text-gray-600">&rarr;</div>
+            <div class="glass rounded-xl p-4 flex-1"><div class="text-xs font-mono text-cfyellow mb-1">2 · api</div><div class="text-white font-medium">Operations</div><div class="text-gray-400 text-xs mt-1">compaction, analytics, local windowing</div></div>
+            <div class="hidden lg:flex items-center text-gray-600">&rarr;</div>
+            <div class="glass rounded-xl p-4 flex-1"><div class="text-xs font-mono text-cfyellow mb-1">3 · http</div><div class="text-white font-medium">Throttle &amp; cache</div><div class="text-gray-400 text-xs mt-1">1.1&nbsp;s spacing, TTL cache, backoff</div></div>
+            <div class="hidden lg:flex items-center text-gray-600">&rarr;</div>
+            <div class="glass rounded-xl p-4 flex-1"><div class="text-xs font-mono text-cfyellow mb-1">4 · upstream</div><div class="text-white font-medium">codeforces.com/api</div><div class="text-gray-400 text-xs mt-1">lang=en, host-pinned, size-capped</div></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="glass rounded-2xl p-6">
+                <h3 class="text-white font-semibold mb-3">Node.js runtime &mdash; <code class="font-mono text-sky-300 text-sm">src/</code></h3>
+                <ul class="text-sm text-gray-400 space-y-1.5 font-mono">
+                    <li><span class="text-gray-200">server.js</span> &middot; STDIO entrypoint</li>
+                    <li><span class="text-gray-200">tools.js</span> &middot; 17 registrations</li>
+                    <li><span class="text-gray-200">api.js</span> &middot; operations &amp; analytics</li>
+                    <li><span class="text-gray-200">http.js</span> &middot; throttle, cache, retries</li>
+                    <li><span class="text-gray-200">normalize.js</span> &middot; pure scoring</li>
+                </ul>
+            </div>
+            <div class="glass rounded-2xl p-6">
+                <h3 class="text-white font-semibold mb-3">Python runtime &mdash; <code class="font-mono text-sky-300 text-sm">app/</code></h3>
+                <ul class="text-sm text-gray-400 space-y-1.5 font-mono">
+                    <li><span class="text-gray-200">run_server.py</span> &middot; STDIO or --http</li>
+                    <li><span class="text-gray-200">tools/*.py</span> &middot; FastMCP registrations</li>
+                    <li><span class="text-gray-200">client/api.py</span> &middot; mirrors api.js</li>
+                    <li><span class="text-gray-200">client/http.py</span> &middot; async httpx client</li>
+                    <li><span class="text-gray-200">main.py</span> &middot; Streamable HTTP ASGI app</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality -->
+    <section id="quality" class="py-16 bg-gray-950/60 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-xs font-bold tracking-widest text-sky-400 uppercase mb-2">Quality</h2>
+                <p class="text-3xl font-bold text-white">Hardened against real API quirks</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4">Notable fixes</h3>
+                    <ul class="text-sm text-gray-400 space-y-3">
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>English names &mdash; Codeforces answers in Russian unless <code class="font-mono text-gray-300">lang=en</code> is sent.</li>
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>Standings work anonymously &mdash; extra params are rejected upstream, so paging is done locally.</li>
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>Unbounded leaderboard and contest payloads are capped.</li>
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>Concurrent calls can no longer slip past the rate limiter.</li>
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>Searching <code class="font-mono text-gray-300">1500</code> returns 1500-rated problems, not contest 1500.</li>
+                        <li><span class="text-green-400 font-mono mr-2">&#10003;</span>One shared HTTP client, reused and closed cleanly; zero unpublished dependencies.</li>
+                    </ul>
+                </div>
+                <div class="glass rounded-2xl p-6">
+                    <h3 class="text-white font-semibold mb-4">Test suites</h3>
+                    <table class="w-full text-sm">
+                        <tbody class="text-gray-400 divide-y divide-gray-800">
+                            <tr><td class="py-2">Node &middot; offline unit</td><td class="py-2 text-right font-mono text-green-400">89 / 89</td></tr>
+                            <tr><td class="py-2">Node &middot; live API smoke</td><td class="py-2 text-right font-mono text-green-400">21 / 21</td></tr>
+                            <tr><td class="py-2">Node &middot; MCP over stdio</td><td class="py-2 text-right font-mono text-green-400">86 / 86</td></tr>
+                            <tr><td class="py-2">Python &middot; unit, mocked API, MCP stdio</td><td class="py-2 text-right font-mono text-green-400">78 / 78</td></tr>
+                            <tr><td class="py-2">Python &middot; live API</td><td class="py-2 text-right font-mono text-green-400">9 / 9</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="text-xs text-gray-500 mt-4">CI runs the offline suites on Node 20 / 22 / 24 and Python 3.10 / 3.12 / 3.13.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-8 border-t border-gray-800/80 text-center text-xs text-gray-500">
+        <p class="mb-2">Data from the <a class="hover:text-gray-300" href="https://codeforces.com/apiHelp">official Codeforces API</a>. Unofficial project, not affiliated with or endorsed by Codeforces.</p>
+        <p>MIT License &middot; <a class="hover:text-gray-300" href="https://github.com/iamrudhresh/mcp-server-codeforces">github.com/iamrudhresh/mcp-server-codeforces</a> &middot; <a class="hover:text-gray-300" href="https://www.npmjs.com/package/mcp-server-codeforces">npm</a></p>
+    </footer>
+
+    <script>
+        const toolsData = [
+            { name: 'search_problems', category: 'problems', desc: 'Search the problemset by id, title, tag or rating. Multi-word queries must match every token.', args: 'query, limit?', example: 'dp 1500' },
+            { name: 'get_problem_metadata', category: 'problems', desc: 'Name, rating, tags, solved count and URL for one problem (158A, 158/A or 158-A).', args: 'problemId', example: '4A' },
+            { name: 'list_problems', category: 'problems', desc: 'Practice ladder: most-solved problems carrying all given tags in a rating range.', args: 'tags?, minRating?, maxRating?, limit?', example: "['dp'], 1200-1400" },
+            { name: 'get_user_info', category: 'users', desc: 'Profiles for 1-10 handles: rating, max rating, rank, tier, country, organization.', args: 'handles[]', example: "['tourist','Benq']" },
+            { name: 'get_user_rating', category: 'users', desc: 'Rating history, newest first, with deltas, best rating, biggest gain and drop.', args: 'handle, limit?', example: 'tourist' },
+            { name: 'get_user_submissions', category: 'users', desc: 'Recent submissions compacted to verdict, problem, language, time and memory.', args: 'handle, from?, count?', example: 'tourist, 25' },
+            { name: 'get_user_stats', category: 'users', desc: 'Solved vs attempted, acceptance rate, verdicts, languages, top tags and solved-by-rating curve.', args: 'handle, sampleSize?', example: 'Benq' },
+            { name: 'compare_users', category: 'users', desc: 'Side-by-side profiles for 2-5 handles, highest rated first.', args: 'handles[]', example: "['tourist','jiangly']" },
+            { name: 'get_rated_users', category: 'users', desc: 'The rated leaderboard, optionally active-only or above a rating. Always capped.', args: 'activeOnly?, minRating?, limit?', example: 'minRating 3000' },
+            { name: 'get_contest_list', category: 'contests', desc: 'Contests by phase (BEFORE, CODING, FINISHED...) or from the gym.', args: 'gym?, phase?, limit?', example: 'FINISHED' },
+            { name: 'get_upcoming_contests', category: 'contests', desc: 'Next scheduled rounds, soonest first, with hours until start.', args: 'limit?', example: '5' },
+            { name: 'get_contest_standings', category: 'contests', desc: 'Contest info, problems and a window of ranked rows; filter by handles.', args: 'contestId, from?, count?, handles?', example: '1700' },
+            { name: 'get_contest_rating_changes', category: 'contests', desc: 'Old rating, new rating and delta for each participant after a rated contest.', args: 'contestId, limit?', example: '1700' },
+            { name: 'get_contest_status', category: 'contests', desc: 'Submissions in a contest, optionally narrowed to one handle.', args: 'contestId, handle?, from?, count?', example: '1700, tourist' },
+            { name: 'get_recent_submissions', category: 'contests', desc: 'Live platform-wide submission feed.', args: 'count?', example: '25' },
+            { name: 'get_capabilities', category: 'meta', desc: 'Supported, degraded and unsupported operations. States the read-only contract.', args: 'none', example: '' },
+            { name: 'get_health', category: 'meta', desc: 'Live probe plus layered health for transport, schema, auth and upstream.', args: 'probe?', example: '' }
+        ];
+
+        const categoryStyle = {
+            problems: { label: 'Problemset', cls: 'bg-cfyellow/15 text-cfyellow border-cfyellow/30' },
+            users: { label: 'Users', cls: 'bg-cfblue/15 text-sky-300 border-cfblue/30' },
+            contests: { label: 'Contests', cls: 'bg-cfred/15 text-red-300 border-cfred/30' },
+            meta: { label: 'Meta', cls: 'bg-green-500/15 text-green-300 border-green-500/30' }
+        };
+
+        let currentFilter = 'all';
+        let activeClient = 'claude';
+
+        function renderTools(tools) {
+            const container = document.getElementById('tools-container');
+            container.innerHTML = '';
+            document.getElementById('tools-empty').classList.toggle('hidden', tools.length > 0);
+            tools.forEach(tool => {
+                const style = categoryStyle[tool.category];
+                const card = document.createElement('div');
+                card.className = 'glass rounded-2xl p-5 flex flex-col';
+
+                const head = document.createElement('div');
+                head.className = 'flex items-start justify-between gap-3 mb-3';
+                const name = document.createElement('code');
+                name.className = 'font-mono text-sm text-white font-semibold break-all';
+                name.textContent = tool.name;
+                const badge = document.createElement('span');
+                badge.className = 'shrink-0 text-[10px] px-2 py-0.5 rounded-full border font-mono ' + style.cls;
+                badge.textContent = style.label;
+                head.append(name, badge);
+
+                const desc = document.createElement('p');
+                desc.className = 'text-sm text-gray-400 leading-relaxed flex-1';
+                desc.textContent = tool.desc;
+
+                const args = document.createElement('div');
+                args.className = 'mt-4 text-xs font-mono text-gray-500';
+                args.textContent = 'args: ' + tool.args + (tool.example ? '  ·  e.g. ' + tool.example : '');
+
+                card.append(head, desc, args);
+                container.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat, el) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-pill').forEach(p => {
+                p.classList.remove('bg-cfblue', 'text-white');
+                p.classList.add('bg-gray-900', 'text-gray-400');
+            });
+            el.classList.remove('bg-gray-900', 'text-gray-400');
+            el.classList.add('bg-cfblue', 'text-white');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('tool-search').value.toLowerCase().trim();
+            renderTools(toolsData.filter(item =>
+                (currentFilter === 'all' || item.category === currentFilter) &&
+                (item.name.includes(query) || item.desc.toLowerCase().includes(query))
+            ));
+        }
+
+        function setClient(client) {
+            activeClient = client;
+            document.querySelectorAll('.client-tab').forEach(el => {
+                el.classList.remove('bg-cfblue', 'text-white');
+                el.classList.add('bg-gray-900', 'text-gray-400', 'hover:text-white');
+                el.setAttribute('aria-selected', 'false');
+            });
+            const tab = document.getElementById('tab-' + client);
+            tab.classList.remove('bg-gray-900', 'text-gray-400', 'hover:text-white');
+            tab.classList.add('bg-cfblue', 'text-white');
+            tab.setAttribute('aria-selected', 'true');
+            document.getElementById('cfg-controls').classList.toggle('hidden', client === 'docker' || client === 'claudecode');
+            renderConfig();
+        }
+
+        function serverEntry(runtime, transport) {
+            if (transport === 'http') return { url: 'http://localhost:8000/mcp' };
+            if (runtime === 'node') return { command: 'npx', args: ['-y', 'mcp-server-codeforces'] };
+            return { command: '/absolute/path/venv/bin/python', args: ['/absolute/path/mcp-server-codeforces/run_server.py'] };
+        }
+
+        function renderConfig() {
+            const runtimeEl = document.getElementById('cfg-runtime');
+            const transport = document.getElementById('cfg-transport').value;
+            if (transport === 'http') runtimeEl.value = 'python';
+            const runtime = runtimeEl.value;
+            const codeEl = document.getElementById('config-code');
+            const fileEl = document.getElementById('config-filename');
+            const noteEl = document.getElementById('config-note');
+            let text = '';
+            let note = transport === 'http'
+                ? 'Start the HTTP server first: python run_server.py --http --port 8000'
+                : 'No API key, cookie or account is needed.';
+
+            if (activeClient === 'docker') {
+                fileEl.textContent = 'terminal';
+                text = 'git clone https://github.com/iamrudhresh/mcp-server-codeforces\n' +
+                       'cd mcp-server-codeforces\n' +
+                       'docker compose up --build\n\n' +
+                       '# MCP endpoint\n' +
+                       'http://localhost:8000/mcp';
+                note = 'Point any Streamable HTTP client at the endpoint above.';
+            } else if (activeClient === 'claudecode') {
+                fileEl.textContent = 'terminal';
+                text = 'claude mcp add codeforces -- npx -y mcp-server-codeforces';
+                note = 'Then run /mcp inside Claude Code to confirm the 17 tools are loaded.';
+            } else {
+                const entry = serverEntry(runtime, transport);
+                if (activeClient === 'claude') {
+                    fileEl.textContent = 'claude_desktop_config.json';
+                    text = JSON.stringify({ mcpServers: { codeforces: entry } }, null, 2);
+                } else if (activeClient === 'cursor') {
+                    fileEl.textContent = '.cursor/mcp.json';
+                    text = JSON.stringify({ mcpServers: { codeforces: entry } }, null, 2);
+                } else if (activeClient === 'cline') {
+                    fileEl.textContent = 'cline_mcp_settings.json';
+                    const clineEntry = Object.assign({}, entry, {
+                        disabled: false,
+                        autoApprove: ['search_problems', 'get_problem_metadata', 'get_user_info', 'get_user_rating', 'get_upcoming_contests']
+                    });
+                    text = JSON.stringify({ mcpServers: { codeforces: clineEntry } }, null, 2);
+                }
+            }
+            codeEl.textContent = text;
+            noteEl.textContent = note;
+        }
+
+        function copySnippet(text, btn) {
+            const done = () => {
+                const orig = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = orig; }, 1600);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done, () => {});
+            }
+        }
+
+        function copyCurrentConfig(btn) {
+            copySnippet(document.getElementById('config-code').textContent, btn);
+        }
+
+        renderTools(toolsData);
+        setClient('claude');
+    </script>
+</body>
+</html>

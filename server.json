@@ -1,0 +1,19 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.iamrudhresh/codeforces",
+  "title": "Codeforces MCP Server",
+  "description": "Read-only Codeforces problems, users, contests and analytics via the official API.",
+  "repository": {
+    "url": "https://github.com/iamrudhresh/mcp-server-codeforces",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "mcp-server-codeforces",
+      "version": "1.0.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}
