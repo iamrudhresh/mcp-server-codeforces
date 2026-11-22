@@ -1,5 +1,5 @@
 {
-  "name": "mcp-server-codeforces",
+  "name": "@iamrudhresh/mcp-server-codeforces",
   "version": "1.0.0",
   "mcpName": "io.github.iamrudhresh/codeforces",
   "description": "Read-only MCP server for the official Codeforces API: problems, users, contests and analytics as structured JSON for LLMs",

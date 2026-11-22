@@ -68,9 +68,9 @@ jobs:
         id: existing
         run: |
           VERSION="$(node -p "require('./package.json').version")"
-          if npm view "mcp-server-codeforces@$VERSION" version >/dev/null 2>&1; then
+          if npm view "@iamrudhresh/mcp-server-codeforces@$VERSION" version >/dev/null 2>&1; then
             echo "published=true" >> "$GITHUB_OUTPUT"
-            echo "mcp-server-codeforces@$VERSION is already on npm; skipping publish."
+            echo "@iamrudhresh/mcp-server-codeforces@$VERSION is already on npm; skipping publish."
           else
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi

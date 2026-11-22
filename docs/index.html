@@ -115,9 +115,9 @@
             <div class="code-glass p-2.5 rounded-2xl flex items-center justify-between gap-3 shadow-2xl">
                 <div class="flex items-center space-x-2 sm:space-x-3 pl-1 sm:pl-2 overflow-hidden text-[11px] sm:text-sm font-mono text-gray-300">
                     <span class="text-cfyellow">$</span>
-                    <span class="whitespace-nowrap">npx -y mcp-server-codeforces</span>
+                    <span class="whitespace-nowrap">npx -y @iamrudhresh/mcp-server-codeforces</span>
                 </div>
-                <button onclick="copySnippet('npx -y mcp-server-codeforces', this)" class="shrink-0 px-4 py-2 rounded-xl bg-cfblue hover:bg-sky-600 text-white text-xs font-semibold transition">Copy</button>
+                <button onclick="copySnippet('npx -y @iamrudhresh/mcp-server-codeforces', this)" class="shrink-0 px-4 py-2 rounded-xl bg-cfblue hover:bg-sky-600 text-white text-xs font-semibold transition">Copy</button>
             </div>
         </div>
 
@@ -332,7 +332,7 @@
 
     <footer class="py-8 border-t border-gray-800/80 text-center text-xs text-gray-500">
         <p class="mb-2">Data from the <a class="hover:text-gray-300" href="https://codeforces.com/apiHelp">official Codeforces API</a>. Unofficial project, not affiliated with or endorsed by Codeforces.</p>
-        <p>MIT License &middot; <a class="hover:text-gray-300" href="https://github.com/iamrudhresh/mcp-server-codeforces">github.com/iamrudhresh/mcp-server-codeforces</a> &middot; <a class="hover:text-gray-300" href="https://www.npmjs.com/package/mcp-server-codeforces">npm</a></p>
+        <p>MIT License &middot; <a class="hover:text-gray-300" href="https://github.com/iamrudhresh/mcp-server-codeforces">github.com/iamrudhresh/mcp-server-codeforces</a> &middot; <a class="hover:text-gray-300" href="https://www.npmjs.com/package/@iamrudhresh/mcp-server-codeforces">npm</a></p>
     </footer>
 
     <script>
@@ -434,7 +434,7 @@
 
         function serverEntry(runtime, transport) {
             if (transport === 'http') return { url: 'http://localhost:8000/mcp' };
-            if (runtime === 'node') return { command: 'npx', args: ['-y', 'mcp-server-codeforces'] };
+            if (runtime === 'node') return { command: 'npx', args: ['-y', '@iamrudhresh/mcp-server-codeforces'] };
             return { command: '/absolute/path/venv/bin/python', args: ['/absolute/path/mcp-server-codeforces/run_server.py'] };
         }
 
@@ -461,7 +461,7 @@
                 note = 'Point any Streamable HTTP client at the endpoint above.';
             } else if (activeClient === 'claudecode') {
                 fileEl.textContent = 'terminal';
-                text = 'claude mcp add codeforces -- npx -y mcp-server-codeforces';
+                text = 'claude mcp add codeforces -- npx -y @iamrudhresh/mcp-server-codeforces';
                 note = 'Then run /mcp inside Claude Code to confirm the 17 tools are loaded.';
             } else {
                 const entry = serverEntry(runtime, transport);

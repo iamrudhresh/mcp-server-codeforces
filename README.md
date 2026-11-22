@@ -1,7 +1,7 @@
 # mcp-server-codeforces
 
 [![CI](https://github.com/iamrudhresh/mcp-server-codeforces/actions/workflows/ci.yml/badge.svg)](https://github.com/iamrudhresh/mcp-server-codeforces/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/mcp-server-codeforces)](https://www.npmjs.com/package/mcp-server-codeforces)
+[![npm](https://img.shields.io/npm/v/@iamrudhresh/mcp-server-codeforces)](https://www.npmjs.com/package/@iamrudhresh/mcp-server-codeforces)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](package.json)
 [![python](https://img.shields.io/badge/python-%3E%3D3.10-blue)](requirements.txt)
@@ -70,7 +70,7 @@ shapes**:
 ### Node.js (recommended)
 
 ```bash
-npx -y mcp-server-codeforces
+npx -y @iamrudhresh/mcp-server-codeforces
 ```
 
 Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) or Cline:
@@ -80,7 +80,7 @@ Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) or Cl
   "mcpServers": {
     "codeforces": {
       "command": "npx",
-      "args": ["-y", "mcp-server-codeforces"]
+      "args": ["-y", "@iamrudhresh/mcp-server-codeforces"]
     }
   }
 }
@@ -89,7 +89,7 @@ Claude Desktop (`claude_desktop_config.json`), Cursor (`.cursor/mcp.json`) or Cl
 Claude Code:
 
 ```bash
-claude mcp add codeforces -- npx -y mcp-server-codeforces
+claude mcp add codeforces -- npx -y @iamrudhresh/mcp-server-codeforces
 ```
 
 ### Python
